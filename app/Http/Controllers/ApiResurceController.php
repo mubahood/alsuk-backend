@@ -934,7 +934,7 @@ class ApiResurceController extends Controller
         ) {
             return $this->error('Local ID is missing.');
         }
- 
+
 
         $isEdit = false;
         if (
@@ -1516,50 +1516,22 @@ class ApiResurceController extends Controller
         if ($receiver == null) {
             return $this->error('Receiver not found.');
         }
-        $pro = Product::find($r->product_id);
-        if ($pro == null) {
-            return $this->error('Product not found.');
+        if ($r->chat_head_id == null || strlen($r->chat_head_id) < 1) {
+            return $this->error('Chat head ID is missing.');
         }
+
         $product_owner = null;
         $customer = null;
 
-        if ($pro->user == $sender->id) {
-            $product_owner = $sender;
-            $customer = $receiver;
-        } else {
-            $product_owner = $receiver;
-            $customer = $sender;
-        }
 
-        $chat_head = ChatHead::where([
-            'product_id' => $pro->id,
-            'product_owner_id' => $product_owner->id,
-            'customer_id' => $customer->id
-        ])->first();
-        if ($chat_head == null) {
-            $chat_head = ChatHead::where([
-                'product_id' => $pro->id,
-                'customer_id' => $product_owner->id,
-                'product_owner_id' => $customer->id
-            ])->first();
-        }
+
+        $chat_head = ChatHead::find($r->chat_head_id);
 
         if ($chat_head == null) {
-            $chat_head = new ChatHead();
-            $chat_head->product_id = $pro->id;
-            $chat_head->product_owner_id = $product_owner->id;
-            $chat_head->customer_id = $customer->id;
-            $chat_head->product_name = $pro->name;
-            $chat_head->product_photo = $pro->feature_photo;
-            $chat_head->product_owner_name = $product_owner->name;
-            $chat_head->product_owner_photo = $product_owner->photo;
-            $chat_head->customer_name = $customer->name;
-            $chat_head->customer_photo = $customer->photo;
-            $chat_head->last_message_body = $r->body;
-            $chat_head->last_message_time = Carbon::now();
-            $chat_head->last_message_status = 'sent';
-            $chat_head->save();
+            return $this->error('Chat head not found.');
         }
+
+
         $chat_message = new ChatMessage();
         $chat_message->chat_head_id = $chat_head->id;
         $chat_message->sender_id = $sender->id;
