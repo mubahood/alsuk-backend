@@ -1,0 +1,7 @@
+
+.DS_Store
+/temp
+/public/temp
+.env
+.env_1
+
