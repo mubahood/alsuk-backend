@@ -43,6 +43,7 @@ Route::post('images-delete', [ApiResurceController::class, 'images_delete']);
 Route::post('chat-start', [ApiResurceController::class, 'chat_start']);
 Route::post('chat-send', [ApiResurceController::class, 'chat_send']);
 Route::post('chat-mark-as-read', [ApiResurceController::class, 'chat_mark_as_read']);
+Route::post('chat-head-delete', [ApiResurceController::class, 'chat_head_delete']);
 Route::get('chat-heads', [ApiResurceController::class, 'chat_heads']);
 Route::get('chat-messages', [ApiResurceController::class, 'chat_messages']);
 Route::get("users/me", [ApiResurceController::class, "my_profile"]);

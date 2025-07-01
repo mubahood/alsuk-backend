@@ -955,88 +955,33 @@ class ApiResurceController extends Controller
         if (!$isEdit) {
             $pro->feature_photo = 'no_image.jpg';
             $pro->user = $u->id;
-            $pro->supplier = $u->id;
             $pro->in_stock = 1;
             $pro->rates = 1;
         }
 
 
-        if ($r->p_type == 'Yes') {
-            if ($r->keywords ==  null) {
-                return $this->error('Prices are missing.');
-            }
-            $my_prices = null;
-            try {
-                $my_prices = json_decode($r->keywords);
-            } catch (\Throwable $th) {
-                $my_prices = null;
-            }
-            //if not array
-            if ($my_prices == null || !is_array($my_prices)) {
-                return $this->error('Prices not found.');
-            }
-            //$my_prices if empty
-            if (count($my_prices) < 1) {
-                return $this->error('Prices not found.');
-            }
-            $prices = [];
-            $min_price = 0;
-            $max_price = 0;
-
-
-            foreach ($my_prices as $key => $value) {
-                if ($value->price == null || strlen($value->price) < 1) {
-                    return $this->error('Price is missing.');
-                }
-                if ($value->min_qty == null || strlen($value->min_qty) < 1) {
-                    return $this->error('Minimum quantity is missing.');
-                }
-                if ($value->max_qty == null || strlen($value->max_qty) < 1) {
-                    return $this->error('Maximum quantity is missing.');
-                }
-                $my_min = (int)($value->min_qty);
-                $my_max = (int)($value->max_qty);
-                $price = (int)($value->price);
-                if ($min_price < $my_min) {
-                    $min_price = $my_min;
-                }
-                if ($max_price < $my_max) {
-                    $max_price = $my_max;
-                }
-                $prices[] = $value;
-            }
-
-            $pro->price_1 = $min_price;
-            $pro->price_2 = $max_price;
-            $pro->keywords = $r->keywords;
-        } else if ($r->p_type == 'No') {
-            if ($r->price_1 == null || strlen($r->price_1) < 1) {
-                return $this->error('Price is missing.');
-            }
-            if ($r->price_2 == null || strlen($r->price_2) < 1) {
-                return $this->error('Price is missing.');
-            }
-            $pro->price_1 = $r->price_1;
-            $pro->price_2 = $r->price_2;
-        } else {
-            return $this->error('Product type is missing.');
+        if ($r->price_1 == null || strlen($r->price_1) < 1) {
+            return $this->error('Price is missing.');
         }
+        if ($r->price_2 == null || strlen($r->price_2) < 1) {
+            return $this->error('Price is missing.');
+        }
+        $pro->price_1 = $r->price_1;
+        $pro->price_2 = $r->price_2;
 
 
         $pro->name = $r->name;
         $pro->description = $r->description;
         $pro->local_id = $r->local_id;
         $pro->summary = $r->data;
+        $pro->supplier = $r->supplier;
         $pro->metric = 1;
         $pro->status = 0;
         $pro->currency = 1;
-        $pro->url = $u->url;
+        $pro->url = $r->url;
 
 
         $pro->has_sizes = $r->has_sizes;
-        $pro->has_colors = $r->has_colors;
-        $pro->colors = $r->colors;
-        $pro->sizes = $r->sizes;
         $pro->p_type = $r->p_type;
 
         $cat = ProductCategory::find($r->category);
@@ -1480,6 +1425,21 @@ class ApiResurceController extends Controller
         return $this->success($chat_heads, 'Success');
     }
 
+    public function chat_head_delete(Request $r)
+    {
+        $head = ChatHead::find($r->chat_head_id);
+        if ($head == null) {
+            return $this->error('Chat head not found.');
+        }
+
+        $head->delete();
+        ChatMessage::where([
+            'chat_head_id' => $head->id
+        ])->delete();
+
+        return $this->success(null, 'Chats deleted successfully.');
+    }
+
     public function chat_mark_as_read(Request $r)
     {
         $receiver = Administrator::find($r->receiver_id);
@@ -1501,6 +1461,7 @@ class ApiResurceController extends Controller
         }
         return $this->success($messages, 'Success');
     }
+
     public function chat_send(Request $r)
     {
         $sender = auth('api')->user();
@@ -1601,15 +1562,38 @@ class ApiResurceController extends Controller
             $chat_head->product_name = $pro->name;
             $chat_head->product_photo = $pro->feature_photo;
             $chat_head->product_owner_name = $product_owner->name;
-            $chat_head->product_owner_photo = $product_owner->photo;
+            $chat_head->product_owner_photo = $product_owner->avatar;
             $chat_head->customer_name = $customer->name;
-            $chat_head->customer_photo = $customer->photo;
+            $chat_head->customer_photo = $customer->avatar;
             $chat_head->last_message_body = '';
             $chat_head->last_message_time = Carbon::now();
             $chat_head->last_message_status = 'sent';
             $chat_head->save();
         }
+        /* 
+Full texts
+id
+created_at
+updated_at
+product_id
+product_name
+product_photo
+product_owner_id
+product_owner_name
+product_owner_photo
+product_owner_last_seen
+customer_id
+customer_name
+customer_photo
+customer_last_seen
+last_message_body
+last_message_time
+last_message_status
 
+Edit Edit
+Copy Copy
+
+*/
         return $this->success($chat_head, 'Success');
     }
 
