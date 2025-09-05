@@ -1,0 +1,105 @@
+/* Account Layout Styles */
+.account-layout {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.account-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Common styles for account pages */
+.account-page {
+  background: white;
+  min-height: calc(100vh - 80px);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.account-page-header {
+  background: linear-gradient(135deg, #F75E1E, #ff7b3d);
+  color: white;
+  padding: 30px;
+  border-radius: 12px 12px 0 0;
+}
+
+.account-page-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.account-page-content {
+  padding: 30px;
+}
+
+/* Navigation breadcrumbs */
+.account-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.account-breadcrumb a {
+  color: #F75E1E;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.account-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.account-breadcrumb .separator {
+  color: #ccc;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .account-container {
+    padding: 0;
+  }
+
+  .account-page {
+    border-radius: 0;
+    min-height: 100vh;
+  }
+
+  .account-page-header {
+    border-radius: 0;
+    padding: 20px 15px;
+  }
+
+  .account-page-header h1 {
+    font-size: 24px;
+  }
+
+  .account-page-content {
+    padding: 20px 15px;
+  }
+}
+
+/* Responsive utilities */
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+}
