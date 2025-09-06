@@ -55,6 +55,21 @@ Route::get('api/{model}', [ApiResurceController::class, 'index']);
 
 Route::get('manifest', [ApiAuthController::class, 'manifest']);
 
+// CORS test endpoint
+Route::get('cors-test', function () {
+    return response()->json([
+        'message' => 'CORS test successful',
+        'timestamp' => now(),
+        'origin' => request()->header('Origin'),
+        'user_agent' => request()->header('User-Agent')
+    ]);
+});
+
+// Options preflight for any API route
+Route::options('{any}', function () {
+    return response()->json([], 200);
+})->where('any', '.*');
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

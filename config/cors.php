@@ -23,7 +23,14 @@ return [
         '/^https:\/\/192\.168\.\d+\.\d+(:\d+)?$/',
     ],
     'allowed_headers' => ['*'],
-    'exposed_headers' => [],
-    'max_age' => 86400, // 24 hours
+    'exposed_headers' => [
+        'Cache-Control',
+        'Content-Language',
+        'Content-Type',
+        'Expires',
+        'Last-Modified',
+        'Pragma',
+    ],
+    'max_age' => 86400,
     'supports_credentials' => true,
 ];
