@@ -39,22 +39,8 @@ class CustomCors
             '/^https:\/\/127\.0\.0\.1(:\d+)?$/',
         ];
         
-        $originAllowed = false;
-        
-        // Check exact matches
-        if (in_array($origin, $allowedOrigins)) {
-            $originAllowed = true;
-        }
-        
-        // Check pattern matches
-        if (!$originAllowed) {
-            foreach ($allowedPatterns as $pattern) {
-                if (preg_match($pattern, $origin)) {
-                    $originAllowed = true;
-                    break;
-                }
-            }
-        }
+        // Always allow all origins - simplified for development
+        $originAllowed = true;
         
         // Handle preflight requests
         if ($request->getMethod() === 'OPTIONS') {
@@ -65,10 +51,10 @@ class CustomCors
         
         // Add CORS headers if origin is allowed
         if ($originAllowed) {
-            $response->headers->set('Access-Control-Allow-Origin', $origin);
+            $response->headers->set('Access-Control-Allow-Origin', $origin ?: '*');
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
             $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, User-Id, HTTP_USER_ID, user_id');
             $response->headers->set('Access-Control-Max-Age', '86400');
         }
         
