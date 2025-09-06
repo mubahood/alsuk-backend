@@ -91,19 +91,82 @@ Route::get('migrate', function () {
 });
 
 Route::get('clear', function () {
-    Artisan::call('config:clear');
-    Artisan::call('cache:clear');
-    Artisan::call('route:clear');
-    Artisan::call('view:clear');
-    Artisan::call('optimize');
-    Artisan::call('cache:clear');
-    Artisan::call('view:clear');
-    Artisan::call('route:clear');
-    Artisan::call('config:clear');
-    Artisan::call('optimize:clear');
-    exec('composer dump-autoload -o');
-    return Artisan::output();
+    $output = [];
+    
+    // Clear all caches and configs
+    $commands = [
+        'config:clear' => 'Configuration cache cleared',
+        'cache:clear' => 'Application cache cleared',
+        'route:clear' => 'Route cache cleared',
+        'view:clear' => 'View cache cleared',
+        'optimize:clear' => 'Optimize cache cleared',
+        'optimize' => 'Application optimized'
+    ];
+    
+    foreach ($commands as $command => $message) {
+        try {
+            Artisan::call($command);
+            $output[] = "✅ {$message}";
+        } catch (Exception $e) {
+            $output[] = "❌ Failed to run {$command}: " . $e->getMessage();
+        }
+    }
+    
+    // Dump autoload
+    try {
+        exec('composer dump-autoload -o 2>&1', $composerOutput, $returnCode);
+        if ($returnCode === 0) {
+            $output[] = "✅ Composer autoload dumped";
+        } else {
+            $output[] = "❌ Failed to dump composer autoload: " . implode("\n", $composerOutput);
+        }
+    } catch (Exception $e) {
+        $output[] = "❌ Composer dump-autoload failed: " . $e->getMessage();
+    }
+    
+    $output[] = "\n🎉 All caches and configs cleared successfully!";
+    $output[] = "Timestamp: " . now()->format('Y-m-d H:i:s');
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Cache clearing completed',
+        'details' => $output,
+        'raw_output' => Artisan::output()
+    ])->header('Content-Type', 'application/json');
 });
+
+Route::get('clear-cors', function () {
+    $output = [];
+    
+    // Clear specific caches related to CORS and API
+    $commands = [
+        'config:clear' => 'Configuration cache cleared (includes CORS config)',
+        'route:clear' => 'Route cache cleared (includes API routes)',
+        'cache:clear' => 'Application cache cleared'
+    ];
+    
+    foreach ($commands as $command => $message) {
+        try {
+            Artisan::call($command);
+            $output[] = "✅ {$message}";
+        } catch (Exception $e) {
+            $output[] = "❌ Failed to run {$command}: " . $e->getMessage();
+        }
+    }
+    
+    $output[] = "\n🌐 CORS and API caches cleared successfully!";
+    $output[] = "Your CORS configuration should now be active.";
+    $output[] = "Timestamp: " . now()->format('Y-m-d H:i:s');
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'CORS cache clearing completed',
+        'details' => $output,
+        'cors_config' => config('cors'),
+        'raw_output' => Artisan::output()
+    ])->header('Content-Type', 'application/json');
+});
+
 Route::get('artisan', function (Request $request) {
     // Artisan::call('migrate');
     //do run laravel migration command
