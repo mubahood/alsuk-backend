@@ -921,7 +921,7 @@ class ApiResurceController extends Controller
     {
 
         $user_id = $r->user;
-        $u = User::find($user_id);
+        $u = Administrator::find($user_id);
         if ($u == null) {
             return $this->error('User not found.');
         }
@@ -1291,6 +1291,14 @@ class ApiResurceController extends Controller
     {
         // Start building the query on active products
         $query = Product::where([]);
+
+        // Filter by user's own products if requested
+        if ($request->filled('my_products') && $request->input('my_products') == 'true') {
+            $user_id = $request->user;
+            if ($user_id) {
+                $query->where('user', $user_id);
+            }
+        }
 
         // Filter by search keyword (in the name or description)
         if ($request->filled('search')) {

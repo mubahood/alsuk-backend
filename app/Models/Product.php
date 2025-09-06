@@ -164,6 +164,12 @@ class Product extends Model
     {
         return $this->hasMany(Image::class, 'product_id', 'id');
     }
+    
+    //belongs to Administrator (user)
+    public function owner()
+    {
+        return $this->belongsTo(\Encore\Admin\Auth\Database\Administrator::class, 'user', 'id');
+    }
 
 
     protected $casts = [

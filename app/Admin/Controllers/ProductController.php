@@ -69,7 +69,7 @@ class ProductController extends AdminController
         $grid->column('date_updated', __('Last Updated'));
         $grid->column('user', __('User'))
             ->display(function ($user) {
-                $u = \App\Models\User::find($user);
+                $u = \Encore\Admin\Auth\Database\Administrator::find($user);
                 return $u ? $u->name : 'Deleted';
             })
             ->sortable();

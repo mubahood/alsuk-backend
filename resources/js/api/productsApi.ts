@@ -5,6 +5,7 @@ export interface ProductFormData {
   url: string; // Contact phone
   supplier: string; // Address  
   category: string;
+  category_text: string;
   price_1: string; // Selling price
   price_2: string; // Original price
   description: string;
