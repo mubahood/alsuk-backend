@@ -31,7 +31,7 @@ class Utils extends Model
             } 
             $MAIL_FROM_ADDRESS = env('MAIL_FROM_ADDRESS');
             if (empty(env('MAIL_FROM_ADDRESS')) || !filter_var(env('MAIL_FROM_ADDRESS'), FILTER_VALIDATE_EMAIL)) {
-                $MAIL_FROM_ADDRESS = "skills@comfarnet.org";
+                $MAIL_FROM_ADDRESS = "admin@alsukssd.com";
             } 
             $data['from_mail'] = $MAIL_FROM_ADDRESS;  
             Mail::send(
